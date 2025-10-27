@@ -1,0 +1,227 @@
+/*
+1. Vypiste vsechny autory cl'anku na kter'ych jsou uvedeny instituce z Ostravy 
+   (z_institution.name obsahuje slovo Ostrava, jm'eno mesta muze b'yt 
+   napr. Ostrava nebo Ostrava-Poruba).
+   Vypiste rid a jm'eno autora, v'ysledek setridte dle rid vzestupne.
+
+   Mus'i b'yt v resen'i join na z_article? Je nutn'e pouz'it distinct?
+
+   Pozn'amka: nemus'i to nutne znamenat, ze autori jsou z Ostravy.
+
+   V'ysledek: 17 838 z'aznamu
+*/
+
+/*
+2. Vypiste vsechny instituce cl'anku na kter'ych je uveden autor 'Pumera, Martin'.
+   Vypiste iid a jm'eno instituce, v'ysledek setridte dle iid vzestupne.
+
+   Potrebujeme join s tabulkou z_article? Potrebujeme distinct?
+
+   V'ysledek: 15 z'aznamu
+*/
+
+/*
+3. Vypiste vsechny cl'anky v casopisech, kter'e byly (v roce vyd'an'i cl'anku) 
+   hodnoceny jako Decil.
+   Vypiste aid a n'azev cl'anku, v'ysledek bude setr'izen dle aid vzestupne.
+
+   Potrebujeme join s tabulkou z_journal? Potrebujeme distinct?
+
+   V'ysledek: 9 501 z'aznamu
+*/
+
+/*
+4. Vypiste vsechny cl'anky v casopisech, kter'e byly (v roce vyd'an'i cl'anku) 
+   hodnoceny jako Decil (z_year_field_journal.ranking='Decil') a u kter'ych 
+   je uvedena instituce 'Vysok'a skola b'ansk'a - Technick'a univerzita Ostrava'.
+   Vypiste aid a n'azev cl'anku, v'ysledek bude setr'izen dle aid vzestupne.
+
+   Potrebujeme join s tabulkou z_journal? Potrebujeme distinct?
+
+   V'ysledek: 133 z'aznamu
+*/
+
+/*
+5. Vypiste casopisy cl'anku, kter'e byly hodnoceny (v roce vyd'an'i cl'anku) jako Decil
+   (z_year_field_journal.ranking='Decil') v oboru Ford '1.2 Computer and Information Sciences'.
+
+   Vypiste jid a n'azev casopisu, v'ysledek setridte vzestupne dle n'azvu casopisu.
+
+   Proc potrebujeme distinct?
+
+   V'ysledek: 45 z'aznamu
+*/
+
+/*
+6. Vypiste cl'anky, kter'e byly hodnoceny (v roce vyd'an'i cl'anku) jako Q1
+   (z_year_field_journal.ranking='Q1') v oboru Ford '1.2 Computer and Information Sciences'
+   a u kter'ych je uvedena instituce 'Vysok'a skola b'ansk'a - Technick'a univerzita Ostrava'.
+
+   Vypiste aid a n'azev cl'anku, v'ysledek setridte vzestupne dle n'azvu cl'anku.
+
+   Potrebujeme join s tabulkou z_journal? Potrebujeme distinct?
+
+   V'ysledek: 42 z'aznamu
+*/
+
+/*
+7. Vypiste autory cl'anku, kter'e byly hodnoceny (v roce vyd'an'i cl'anku) 
+   jako Decil nebo Q1 (z_year_field_journal.ranking='Q1' or 'Decil') v oboru Ford 
+   '1.2 Computer and Information Sciences' a u kter'ych je uvedena instituce 
+   'Vysok'a skola b'ansk'a - Technick'a univerzita Ostrava'. Pro kazd'eho 
+   autora vypiste rid a jm'eno a pocet takov'ych cl'anku. Uvazujte pouze autory 
+   s nenulov'ym poctem takov'ych cl'anku.
+
+   V'ysledek setridte sestupne dle poctu cl'anku a jm'ena autora vzestupne.
+
+   Potrebujeme join s tabulkou z_journal? Potrebujeme distinct?
+
+   V'ysledek: 202 z'aznamu
+*/
+
+/*
+8. Vypiste vsechny autory cl'anku, na kter'ych je uvedena instituce 
+   'Vysok'a skola b'ansk'a - Technick'a univerzita Ostrava', ke kazd'emu autorovi 
+   uvedte n'asleduj'ic'i:
+     - pocet cl'anku hodnocen'ych jako Decil, kde je uvedena stejn'a instituce,
+     - pocet cl'anku hodnocen'ych jako Q1, kde je uvedena stejn'a instituce.
+
+   Uvedte rid a jm'eno autora, v'ysledek setridte dle poctu cl'anku Decil a Q1 sestupne.
+
+   V'ysledek: 6036 z'aznamu
+   Prvn'ich 5 z'aznamu:
+   rid	name	pocet_clanku_decil	pocet_clanku_q1
+   299355	Zboril, Radek	21	15
+   155458	Legut, Dominik	16	30
+   231565	Rummeli, Mark H.	15	10
+   300611	Zhang, Qianfan	12	11
+   200904	Otyepka, Michal	12	9
+
+   3 varianty resen'i:
+   (a) Nejprve poddotazy v projekci.
+*/
+
+-- (b) Oba dotazy v projekci se opakuj'i, muzeme zjednodusit pomoc'i CTE
+
+-- (c) V tomto pr'ipade nen'i nutn'e pouz'ivat poddotazy v projekci, vsechny poddotazy 
+--     pracuj'i s podobn'ymi z'aznamy, tedy cl'anky s dan'ym autorem a danou instituc'i, 
+--     muzeme resit pomoc'i group by a count - case.
+
+/*
+9. Vypiste seznam autoru, kter'i maj'i nejvyss'i pocet cl'anku v casopisech 
+   v jednotliv'ych oborech FORD. Neuvazujte obory FORD s nulov'ym poctem cl'anku.
+   Vypiste fid a n'azev oboru FORD, rid a jm'eno autora a pocet cl'anku.
+   V'ysledek setridte dle n'azvu oboru FORD a jm'ena autora vzestupne.
+*/
+
+/*
+V'ysledek: 49 z'aznamu
+fid	ff_name	rid	author_name	pocet_clanku
+11	1.1 Mathematics	74578	Feireisl, Eduard	68
+12	1.2 Computer and Information Sciences	178787	Mesiar, Radko	104
+13	1.3 Physical Sciences	115174	Chen, X.	877
+14	1.4 Chemical Sciences	218838	Pumera, Martin	225
+15	1.5 Earth and Related Environmental Sciences	137065	Klemes, Jiri Jaromir	98
+16	1.6 Biological Sciences	147414	Kuca, Kamil	130
+17	1.7 Other Natural Sciences	54211	Datta, Rahul	21
+21	2.1 Civil engineering	44750	Cerny, Robert	25
+30	2.10 Nano-technology	218838	Pumera, Martin	115
+31	2.11 Other engineering and technologies	147414	Kuca, Kamil	161
+22	2.2 Electrical engineering, electronic engineering, information engineering	286043	Voznak, Miroslav	75
+23	2.3 Mechanical engineering	57618	Dejarnac, R.	64
+24	2.4 Chemical engineering	120645	Izak, Pavel	22
+25	2.5 Materials engineering	218838	Pumera, Martin	152
+26	2.6 Medical engineering	13929	Bacakova, Lucie	13
+27	2.7 Environmental engineering	137065	Klemes, Jiri Jaromir	128
+28	2.8 Environmental biotechnology	197004	Obruca, Stanislav	15
+29	2.9 Industrial biotechnology	13929	Bacakova, Lucie	16
+32	3.2 Clinical Medicine	241438	Shariat, Shahrokh F.	211
+33	3.3 Health Sciences	278088	van Dijk, Jitse P.	54
+41	4.1 Agriculture, Forestry and Fisheries	81209	Frouz, Jan	36
+42	4.2 Animal and Dairy Science	273583	Tumova, Eva	18
+42	4.2 Animal and Dairy Science	285854	Voslarova, Eva	18
+43	4.3 Veterinary Science	285854	Voslarova, Eva	28
+45	4.5 Other Agricultural Sciences	98158	Hajslova, Jana	47
+51	5.1 Psychology and Cognitive Sciences	101778	Havlicek, Jan	27
+52	5.2 Economics and business	269888	Toloo, Mehdi	26
+53	5.3 Education	34537	Brom, Cyril	11
+53	5.3 Education	45605	Cincera, Jan	11
+54	5.4 Sociology	281129	Veleminsky, Petr	14
+55	5.5 Law	99455	Handrlica, Jakub	7
+56	5.6 Political science	251290	Smetana, Michal	12
+57	5.7 Social and Economic Geography	234800	Salvati, Luca	27
+58	5.8 Media and Communication	251049	Smahel, David	7
+59	5.9 Other Social Sciences	109552	Houdek, Petr	4
+61	6.1 History and archaeology	281129	Veleminsky, Petr	11
+62	6.2 Languages and literature	43991	Cech, Radek	5
+62	6.2 Languages and literature	51896	Cvrcek, Vaclav	5
+62	6.2 Languages and literature	108093	Homolac, Jiri	5
+62	6.2 Languages and literature	117158	Chovanec, Jan	5
+62	6.2 Languages and literature	251826	Smolik, Filip	5
+63	6.3 Philosophy, ethics and religion	218855	Puncochar, Vit	5
+63	6.3 Philosophy, ethics and religion	259123	Stovall, Preston	5
+64	6.4 Arts	166189	Magail, Jerome	3
+64	6.4 Arts	184204	Monna, Fabrice	3
+64	6.4 Arts	191072	Navarro, Nicolas	3
+64	6.4 Arts	291446	Wilczek, Josef	3
+64	6.4 Arts	298804	Zapletalova, Jana	3
+65	6.5 Other Humanities and the Arts	150924	Lackova, Ludmila	5
+*/
+
+/*
+10. Vypiste pro jednotliv'e obory FORD nejvyss'i pocet autoru na jednom cl'anku 
+    (takov'ych cl'anku muze b'yt v'ice). Neuvazujte obory FORD s nulov'ym poctem cl'anku.
+    Vypiste fid a n'azev oboru FORD, a.aid cl'anku a pocet autoru cl'anku.
+    Setridte podle poctu autoru sestupne.
+*/
+
+/*
+V'ysledek: 42 z'aznamu
+
+order by pocet_autoru desc
+fid	name	aid	pocet_autoru
+13	1.3 Physical Sciences	57503	768
+13	1.3 Physical Sciences	63738	768
+31	2.11 Other engineering and technologies	60892	657
+32	3.2 Clinical Medicine	41960	655
+23	2.3 Mechanical engineering	76680	651
+25	2.5 Materials engineering	59117	647
+12	1.2 Computer and Information Sciences	10628	647
+15	1.5 Earth and Related Environmental Sciences	74511	647
+11	1.1 Mathematics	10628	647
+33	3.3 Health Sciences	74511	647
+12	1.2 Computer and Information Sciences	9245	647
+11	1.1 Mathematics	9245	647
+22	2.2 Electrical engineering, electronic engineering, information engineering	5340	644
+17	1.7 Other Natural Sciences	50298	623
+16	1.6 Biological Sciences	5569	483
+51	5.1 Psychology and Cognitive Sciences	50331	449
+26	2.6 Medical engineering	42778	234
+41	4.1 Agriculture, Forestry and Fisheries	55225	223
+45	4.5 Other Agricultural Sciences	74678	195
+52	5.2 Economics and business	53304	179
+28	2.8 Environmental biotechnology	15854	150
+14	1.4 Chemical Sciences	51617	129
+59	5.9 Other Social Sciences	32041	114
+58	5.8 Media and Communication	76414	99
+53	5.3 Education	76659	80
+43	4.3 Veterinary Science	20643	77
+43	4.3 Veterinary Science	11957	77
+27	2.7 Environmental engineering	57487	76
+57	5.7 Social and Economic Geography	33100	70
+63	6.3 Philosophy, ethics and religion	58775	61
+62	6.2 Languages and literature	65799	59
+56	5.6 Political science	30602	47
+24	2.4 Chemical engineering	4320	46
+30	2.10 Nano-technology	31128	44
+21	2.1 Civil engineering	43018	34
+42	4.2 Animal and Dairy Science	7402	26
+29	2.9 Industrial biotechnology	29644	22
+54	5.4 Sociology	60354	21
+61	6.1 History and archaeology	60354	21
+55	5.5 Law	2242	13
+64	6.4 Arts	19636	13
+65	6.5 Other Humanities and the Arts	13848	12
+*/
+
+
