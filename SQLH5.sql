@@ -6,13 +6,13 @@
 */
 
 
-select distinct a.rid, a.name 
+select distinct a.rid, a.name
 from z_author a
-join z_article_author aa on a.rid = aa.rid
-join z_article_institution ai on aa.aid = ai.aid
-join z_institution i on ai.iid = i.iid
+         join z_article_author aa on a.rid = aa.rid
+         join z_article_institution ai on aa.aid = ai.aid
+         join z_institution i on ai.iid = i.iid
 where i.town like 'Ostrava%'
-order by a.rid 
+order by a.rid
 
 
 /*
@@ -24,15 +24,15 @@ order by a.rid
 */
 
 
-select distinct a.aid, a.name from z_article a
-join z_year_field_journal yfj on a.jid = yfj.jid and a.year = yfj.year
-where yfj.ranking = 'Decil' and exists(
-	select 1 from z_institution i
-	join z_article_institution ai on i.iid = ai.iid and a.aid = ai.aid
-	where i.name = 'Vysoká škola báňská - Technická univerzita Ostrava'
-)
+select distinct a.aid, a.name
+from z_article a
+         join z_year_field_journal yfj on a.jid = yfj.jid and a.year = yfj.year
+where yfj.ranking = 'Decil'
+  and exists(select 1
+             from z_institution i
+                      join z_article_institution ai on i.iid = ai.iid and a.aid = ai.aid
+             where i.name = 'Vysoká škola báňská - Technická univerzita Ostrava')
 order by a.aid
-
 
 
 /*
@@ -42,22 +42,18 @@ order by a.aid
     Setřiďte podle počtu autorů sestupně.
 */
 
-with cte as 
-(
-	select COUNT(distinct aa.rid) as cnt, ff.fid, ff.name, a.aid
-	from z_article a
-	join z_article_author aa on a.aid = aa.aid
-	join z_year_field_journal yfj on a.jid = yfj.jid and a.year = yfj.year
-	join z_field_ford ff on ff.fid = yfj.fid
-	group by a.aid, ff.fid, ff.name
-) 
+with cte as
+         (select COUNT(distinct aa.rid) as cnt, ff.fid, ff.name, a.aid
+          from z_article a
+                   join z_article_author aa on a.aid = aa.aid
+                   join z_year_field_journal yfj on a.jid = yfj.jid and a.year = yfj.year
+                   join z_field_ford ff on ff.fid = yfj.fid
+          group by a.aid, ff.fid, ff.name)
 select *
 from cte as ct
-where ct.cnt = (
-	select max(cte.cnt)
-	from cte
-	where ct.fid = cte.fid
-)
+where ct.cnt = (select max(cte.cnt)
+                from cte
+                where ct.fid = cte.fid)
 
 
 -- 3.
@@ -101,7 +97,7 @@ from z_institution zi
          left join clanky_2017 on zi.iid = clanky_2017.iid
          left join clanky_2020 on zi.iid = clanky_2020.iid
 where name like '%chemie%'
-  and clanky_2017.pocet_clanku >clanky_2020.pocet_clanku;
+  and clanky_2017.pocet_clanku > clanky_2020.pocet_clanku;
 
 
 
