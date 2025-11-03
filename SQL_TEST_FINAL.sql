@@ -36,7 +36,7 @@ filtered as (
 --join z_field_ford ff on ff.fid = awc.fid
 select f.fid, f.name, AVG(cast(f.avg_count_prep as float))
 from filtered f
-group by f.fid;
+group by f.fid, f.name;
 
 -----------
 
@@ -77,16 +77,16 @@ with instituce_agro as (
 	where i.name LIKE '%agro%'
 ),
 articles_in_agro as (
-	select distinct ai.aid
+	select ai.aid, ia.iid
 	from z_article_institution ai
 	join instituce_agro ia on ai.iid = ia.iid
 ),
 authors_in_art as (
-	select aa.rid, COUNT(aia.aid) pocet
+	select aa.rid, COUNT(distinct aia.iid) pocet
 	from z_article_author aa
 	join articles_in_agro aia on aia.aid = aa.aid
 	group by aa.rid
-	having COUNT(aia.aid) >= 2
+	having COUNT(distinct aia.iid) >= 2
 )
 select *
 from z_author a
